@@ -134,6 +134,11 @@ h1{font-size:clamp(30px,3vw,42px);margin:0}
 .popover-row-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:11px;color:#4c6669}
 .popover-row-head strong{font-size:13px;color:#147b68;white-space:nowrap}
 .popover-row input[type=range]{display:block;width:100%;margin:9px 0 3px;accent-color:#16987e}
+.popover-number{display:flex;align-items:center;gap:4px;white-space:nowrap;color:#147b68;font-size:12px;font-weight:700}
+.popover-number input{width:72px;min-width:0;padding:4px 5px;border:1px solid #bfd5ce;border-radius:6px;color:#147b68;background:#fff;text-align:right;font-size:13px;font-weight:700}
+.popover-number input:focus{outline:2px solid #87cbb7;outline-offset:1px}
+.popover-number input[aria-invalid=true]{border-color:var(--danger)}
+.popover-row input[hidden],.popover-number[hidden]{display:none}
 .readonly-note{margin:6px 0 0;font-size:11px;color:#728681}
 .circuit-footer{border-top:1px solid #e4eeea;padding:11px 0 14px;display:flex;align-items:center;justify-content:space-between;gap:14px}
 .status-box{display:flex;align-items:flex-start;gap:9px;margin:0;padding:9px 12px;min-width:260px;border-radius:9px}

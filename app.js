@@ -9,11 +9,12 @@ const state = {
 const controls = {
   vin: { title: 'Input voltage', symbol: 'V<sub>in</sub>', description: 'Set the DC input supplied to the converter.', min: 1, max: 24, step: 0.1, toSlider: v => v, fromSlider: v => v, format: v => `${v.toFixed(1)} V` },
   duty: { title: 'Duty ratio', symbol: 'D', description: 'Fraction of each cycle for which the switch is on.', min: 1, max: 80, step: 0.1, toSlider: v => v * 100, fromSlider: v => v / 100, format: v => `${(v * 100).toFixed(1)}%` },
-  vout: { title: 'Output voltage', symbol: 'V<sub>out</sub>', description: 'Choose a target output voltage. The required duty ratio is calculated.', min: 1.1, max: 120, step: 0.1, toSlider: v => v, fromSlider: v => v, format: v => `${v.toFixed(2)} V` },
+  vout: { title: 'Output voltage', symbol: 'V<sub>out</sub>', description: 'Choose a target output voltage. The required duty ratio is calculated.', min: 1.1, max: 120, step: 0.01, toSlider: v => v, fromSlider: v => v, format: v => `${v.toFixed(2)} V` },
   inductance: { title: 'Inductance', symbol: 'L', description: 'Changing L changes current ripple and the CCM boundary.', min: 1, max: 500, step: 1, toSlider: v => v * 1e6, fromSlider: v => v * 1e-6, format: v => `${Math.round(v * 1e6)} µH` },
   capacitance: { title: 'Output capacitance', symbol: 'C', description: 'The 100 µF default is illustrative. Changing C changes output-voltage ripple.', min: 1, max: 1000, step: 1, toSlider: v => v * 1e6, fromSlider: v => v * 1e-6, format: v => `${Math.round(v * 1e6)} µF` },
   resistance: { title: 'Load resistance', symbol: 'R', description: 'Changing R changes load current and the CCM boundary.', min: 1, max: 200, step: 1, toSlider: v => v, fromSlider: v => v, format: v => `${Math.round(v)} Ω` }
 };
+const controlUnits = { vin: 'V', duty: '%', vout: 'V', inductance: 'µH', capacitance: 'µF', resistance: 'Ω' };
 
 const $ = id => document.getElementById(id);
 const svg = $('circuit');
@@ -68,6 +69,8 @@ function refreshControls() {
   $('popover-title').textContent = key === 'duty' ? 'MOSFET gate drive' : config.title;
   $('primary-label').innerHTML = config.symbol;
   $('primary-value').textContent = displayValue(key, v);
+  $('primary-value').hidden = !computed;
+  $('primary-editable').hidden = computed;
   $('primary-slider').hidden = computed;
   $('primary-readonly').hidden = !computed;
   $('frequency-row').hidden = key !== 'duty';
@@ -78,10 +81,17 @@ function refreshControls() {
     input.step = config.step;
     input.value = config.toSlider(key === 'vout' ? state.targetVout : state[key]);
     input.setAttribute('aria-label', config.title);
+    const number = $('primary-number');
+    number.min = config.min;
+    number.max = config.max;
+    number.step = config.step;
+    number.setAttribute('aria-label', `${config.title} in ${controlUnits[key]}`);
+    if (document.activeElement !== number) number.value = input.value;
+    $('primary-unit').textContent = controlUnits[key];
   }
   if (key === 'duty') {
     $('frequency-slider').value = state.frequency / 1000;
-    $('frequency-value').textContent = `${Math.round(state.frequency / 1000)} kHz`;
+    if (document.activeElement !== $('frequency-number')) $('frequency-number').value = $('frequency-slider').value;
   }
 }
 
@@ -275,6 +285,30 @@ $('frequency-slider').addEventListener('input', event => {
   state.frequency = Number(event.target.value) * 1000;
   update();
 });
+function bindNumber(numberId, sliderId, apply) {
+  const number = $(numberId);
+  const slider = $(sliderId);
+  number.addEventListener('input', () => {
+    const value = number.valueAsNumber;
+    const valid = number.value !== '' && Number.isFinite(value) && value >= Number(slider.min) && value <= Number(slider.max);
+    number.setAttribute('aria-invalid', String(!valid));
+    if (!valid) return;
+    slider.value = value;
+    apply(Number(slider.value));
+    update();
+  });
+  number.addEventListener('blur', () => {
+    number.value = slider.value;
+    number.removeAttribute('aria-invalid');
+  });
+}
+bindNumber('primary-number', 'primary-slider', value => {
+  const key = state.selected;
+  if (!key || key === calculatedKey()) return;
+  if (key === 'vout') state.targetVout = controls[key].fromSlider(value);
+  else state[key] = controls[key].fromSlider(value);
+});
+bindNumber('frequency-number', 'frequency-slider', value => { state.frequency = value * 1000; });
 $('mode-vout').addEventListener('click', () => setMode('vout'));
 $('mode-duty').addEventListener('click', () => setMode('duty'));
 $('run-button').addEventListener('click', run);
