@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101e28">
+  <title>Boost Converter CCM Lab</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="page-head">
+      <div>
+        <p class="eyebrow">ELEG3207 · Lab 2 companion</p>
+        <h1>Boost converter <span>CCM lab</span></h1>
+      </div>
+      <p class="intro">Select a circuit symbol to change its value. Run shows steady-state waveforms and a slowed switch animation.</p>
+    </header>
+
+    <section class="mode-card" aria-labelledby="mode-heading">
+      <div>
+        <p class="eyebrow">Calculation mode</p>
+        <h2 id="mode-heading">Choose the unknown</h2>
+      </div>
+      <div class="mode-switch" role="group" aria-label="Calculation mode">
+        <button id="mode-vout" class="mode active" type="button" aria-pressed="true">Unknown <i>V</i><sub>out</sub></button>
+        <button id="mode-duty" class="mode" type="button" aria-pressed="false">Unknown <i>D</i></button>
+      </div>
+    </section>
+
+    <section class="workspace" aria-label="Interactive boost converter">
+      <div class="circuit-card">
+        <div class="section-head"><div><p class="eyebrow">Ideal circuit · continuous conduction</p><h2>Select a component</h2></div><span class="hint">Click a symbol to adjust; move away to close</span></div>
+        <div class="circuit-scroll">
+          <div id="circuit-stage" class="circuit-stage">
+          <div id="component-popover" class="component-popover" role="dialog" aria-label="Circuit value controls" hidden>
+            <div class="popover-head"><strong id="popover-title"></strong><button id="popover-close" type="button" aria-label="Close controls">×</button></div>
+            <div class="popover-row"><div class="popover-row-head"><label id="primary-label" for="primary-slider"></label><strong id="primary-value"></strong></div><input id="primary-slider" type="range"><p id="primary-readonly" class="readonly-note" hidden>Calculated in this mode</p></div>
+            <div id="frequency-row" class="popover-row" hidden><div class="popover-row-head"><label for="frequency-slider">f<sub>s</sub> · switching frequency</label><strong id="frequency-value"></strong></div><input id="frequency-slider" type="range" min="20" max="500" step="1"></div>
+          </div>
+          <svg id="circuit" viewBox="0 0 900 440" role="img" aria-labelledby="circuit-title circuit-desc">
+            <title id="circuit-title">Interactive boost-converter circuit</title>
+            <desc id="circuit-desc">Input source connected through an inductor and diode to an output capacitor and load resistor. A controlled switch connects the inductor and diode junction to the common return.</desc>
+            <defs>
+              <marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker>
+            </defs>
+
+            <g class="wire"><path d="M105 162 V155 H174 M288 155 H355 M462 155 H730 V183 M730 295 V342 H105 V249 M320 155 V227 M320 288 V342 M565 155 V238 M565 262 V342"/></g>
+            <g class="node"><circle cx="320" cy="155" r="5"/><circle cx="565" cy="155" r="5"/><circle cx="730" cy="155" r="5"/><circle cx="565" cy="342" r="5"/><circle cx="730" cy="342" r="5"/></g>
+            <g id="path-on" class="flow-path"><path d="M105 155 H320 V342 H105"/></g>
+            <g id="path-off" class="flow-path"><path d="M105 155 H730 V342 H105"/></g>
+
+            <g class="component control" data-control="vin" tabindex="0" role="button" aria-label="Set input voltage">
+              <rect class="hit" x="54" y="138" width="150" height="160" rx="18"/>
+              <circle class="symbol-shape" cx="105" cy="205" r="43"/><path class="symbol-line" d="M105 180 v15 m-8 -7.5 h16 M97 226 h16"/>
+              <text class="symbol-text" x="105" y="110">V<tspan class="sub">in</tspan></text>
+              <text class="value-text" id="label-vin" x="171" y="278">5.0 V</text>
+            </g>
+            <g class="component control" data-control="inductance" tabindex="0" role="button" aria-label="Set inductance">
+              <rect class="hit" x="166" y="84" width="129" height="125" rx="18"/>
+              <path class="symbol-line" d="M174 155 c0 -29 28 -29 28 0 c0 -29 28 -29 28 0 c0 -29 28 -29 28 0 c0 -29 30 -29 30 0"/>
+              <text class="symbol-text" x="231" y="105">L</text><text class="value-text" id="label-inductance" x="231" y="199">100 µH</text>
+            </g>
+            <g class="component" aria-label="Diode">
+              <path class="symbol-line" d="M355 155 h17 m66 0 h24 M372 123 V187 L423 155 Z M423 123 V187"/>
+              <text class="symbol-text" x="407" y="103">D<tspan class="sub">iode</tspan></text>
+            </g>
+            <g class="component control" data-control="duty" tabindex="0" role="button" aria-label="Set MOSFET drive">
+              <rect class="hit" x="262" y="203" width="206" height="128" rx="18"/>
+              <path class="symbol-line" d="M320 227 V247 M320 283 V295 M296 267 H313"/>
+              <path id="switch-contact" class="symbol-line switch-contact" d="M322 259 L343 240"/>
+              <circle class="symbol-shape small" cx="320" cy="253" r="4"/><circle class="symbol-shape small" cx="320" cy="282" r="4"/>
+              <text class="symbol-text switch-heading" x="391" y="238">MOSFET</text>
+              <text class="value-text switch-value" id="label-duty" x="394" y="275">D 10.0%</text>
+              <text class="value-text switch-value" id="label-frequency" x="394" y="302">fₛ 200 kHz</text>
+            </g>
+            <g class="component control" data-control="capacitance" tabindex="0" role="button" aria-label="Set capacitance">
+              <rect class="hit" x="505" y="188" width="120" height="126" rx="18"/>
+              <path class="symbol-line" d="M535 238 H595 M535 262 H595"/>
+              <text class="symbol-text" x="623" y="238">C</text><text class="value-text" id="label-capacitance" x="623" y="265">100 µF</text>
+            </g>
+            <g class="component control" data-control="resistance" tabindex="0" role="button" aria-label="Set load resistance">
+              <rect class="hit" x="668" y="182" width="125" height="130" rx="18"/>
+              <path class="symbol-line" d="M730 183 V203 l-16 10 32 16 -32 16 32 16 -32 16 16 10 V295"/>
+              <text class="symbol-text" x="785" y="238">R</text><text class="value-text" id="label-resistance" x="785" y="265">20 Ω</text>
+            </g>
+            <g class="component control output" data-control="vout" tabindex="0" role="button" aria-label="Set target output voltage">
+              <rect class="hit" x="793" y="128" width="92" height="95" rx="18"/>
+              <path class="symbol-line thin" d="M730 155 H770"/>
+              <circle class="output-terminal" cx="770" cy="155" r="5"/>
+              <text class="symbol-text" x="822" y="153">V<tspan class="sub">out</tspan></text>
+              <text class="value-text" id="label-vout" x="822" y="184">5.56 V</text>
+            </g>
+            <text class="ground-label" x="105" y="377">COMMON RETURN</text>
+          </svg>
+          </div>
+        </div>
+        <div class="circuit-footer">
+          <div id="status-box" class="status-box" role="status"><span id="status-dot" class="status-dot"></span><div><strong id="status-title">CCM valid</strong><p id="status-detail">Inductor current stays above zero.</p></div></div>
+          <div class="run-actions"><span id="phase-label" class="phase-label">Switch animation is slowed, not to scale</span><button id="run-button" class="run-button" type="button"><span class="play-icon">▶</span> Run</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="results" id="results" aria-labelledby="results-heading" hidden>
+      <div class="section-head"><div><p class="eyebrow">Steady-state CCM</p><h2 id="results-heading">Waveforms</h2></div><span id="run-state" class="run-state">Three switching periods</span></div>
+      <div class="metrics"><div><span>Output voltage</span><strong id="metric-vout">—</strong></div><div><span>Output current</span><strong id="metric-iout">—</strong></div><div><span>Mean inductor current</span><strong id="metric-il">—</strong></div><div><span>Inductor ripple, peak to peak</span><strong id="metric-ripple">—</strong></div></div>
+      <div class="plots"><div class="plot-card"><div class="plot-heading"><h3>Inductor current <i>i</i><sub>L</sub></h3><span id="current-scale">A</span></div><svg id="current-plot" viewBox="0 0 640 210" role="img" aria-label="Inductor current over three switching cycles"></svg></div><div class="plot-card"><div class="plot-heading"><h3>Output voltage <i>v</i><sub>out</sub></h3><span id="voltage-scale">V</span></div><svg id="voltage-plot" viewBox="0 0 640 210" role="img" aria-label="Output voltage ripple over three switching cycles"></svg></div></div>
+      <p class="model-note">Ideal steady-state CCM model. The voltage waveform uses a small-ripple approximation. The switch animation is slowed for visibility; the plots use the selected switching frequency.</p>
+    </section>
+  </main>
+</body>
+</html>
