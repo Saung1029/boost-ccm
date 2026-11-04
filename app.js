@@ -142,7 +142,9 @@ function update() {
   refreshControls();
   if ($('run-state').dataset.ran === 'true') {
     $('run-state').dataset.ran = 'false';
-    $('results').hidden = true;
+    $('run-state').textContent = 'Ready to run';
+    $('results-prompt').hidden = false;
+    $('results-content').hidden = true;
     stopAnimation();
   }
   $('phase-label').textContent = `Animation ${animationFactor()}× slower · 3 s per cycle`;
@@ -253,7 +255,8 @@ function run() {
   $('voltage-scale').textContent = `${Math.min(...voltage).toFixed(3)}–${Math.max(...voltage).toFixed(3)} V`;
   $('run-state').textContent = `Three periods · ${Math.round(state.frequency / 1000)} kHz`;
   $('run-state').dataset.ran = 'true';
-  $('results').hidden = false;
+  $('results-prompt').hidden = true;
+  $('results-content').hidden = false;
   closeControls();
   animate();
 }
@@ -311,5 +314,11 @@ bindNumber('primary-number', 'primary-slider', value => {
 bindNumber('frequency-number', 'frequency-slider', value => { state.frequency = value * 1000; });
 $('mode-vout').addEventListener('click', () => setMode('vout'));
 $('mode-duty').addEventListener('click', () => setMode('duty'));
+$('circuit-zoom').addEventListener('input', event => {
+  const size = Number(event.target.value);
+  $('circuit-stage').style.width = `${size * 10}px`;
+  $('zoom-value').textContent = `${size}%`;
+  if (state.selected) openControls(state.selected);
+});
 $('run-button').addEventListener('click', run);
 update();

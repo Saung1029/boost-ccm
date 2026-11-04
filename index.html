@@ -31,7 +31,7 @@
 
     <section class="workspace" aria-label="Interactive boost converter">
       <div class="circuit-card">
-        <div class="section-head"><div><p class="eyebrow">Ideal circuit · continuous conduction</p><h2>Select a component</h2></div><span class="hint">Click a symbol to adjust; move away to close</span></div>
+        <div class="section-head"><div><p class="eyebrow">Ideal circuit · continuous conduction</p><h2>Select a component</h2></div><div class="circuit-size"><label for="circuit-zoom">Size</label><input id="circuit-zoom" type="range" min="50" max="100" step="5" value="70" aria-label="Circuit size"><output id="zoom-value" for="circuit-zoom">70%</output></div></div>
         <div class="circuit-scroll">
           <div id="circuit-stage" class="circuit-stage">
           <div id="component-popover" class="component-popover" role="dialog" aria-label="Circuit value controls" hidden>
@@ -101,13 +101,15 @@
           <div class="run-actions"><span id="phase-label" class="phase-label">Switch animation is slowed, not to scale</span><button id="run-button" class="run-button" type="button"><span class="play-icon">▶</span> Run</button></div>
         </div>
       </div>
-    </section>
-
-    <section class="results" id="results" aria-labelledby="results-heading" hidden>
-      <div class="section-head"><div><p class="eyebrow">Steady-state CCM</p><h2 id="results-heading">Waveforms</h2></div><span id="run-state" class="run-state">Three switching periods</span></div>
+      <section class="results" id="results" aria-labelledby="results-heading">
+      <div class="section-head"><div><p class="eyebrow">Steady-state CCM</p><h2 id="results-heading">Results</h2></div><span id="run-state" class="run-state">Ready to run</span></div>
+      <p id="results-prompt" class="results-prompt">Choose values on the circuit, then press Run to see the output and waveforms.</p>
+      <div id="results-content" hidden>
       <div class="metrics"><div><span>Output voltage</span><strong id="metric-vout">—</strong></div><div><span>Output current</span><strong id="metric-iout">—</strong></div><div><span>Mean inductor current</span><strong id="metric-il">—</strong></div><div><span>Inductor ripple, peak to peak</span><strong id="metric-ripple">—</strong></div></div>
       <div class="plots"><div class="plot-card"><div class="plot-heading"><h3>Inductor current <i>i</i><sub>L</sub></h3><span id="current-scale">A</span></div><svg id="current-plot" viewBox="0 0 640 210" role="img" aria-label="Inductor current over three switching cycles"></svg></div><div class="plot-card"><div class="plot-heading"><h3>Output voltage <i>v</i><sub>out</sub></h3><span id="voltage-scale">V</span></div><svg id="voltage-plot" viewBox="0 0 640 210" role="img" aria-label="Output voltage ripple over three switching cycles"></svg></div></div>
       <p class="model-note">Ideal steady-state CCM model. The voltage waveform uses a small-ripple approximation. The switch animation is slowed for visibility; the plots use the selected switching frequency.</p>
+      </div>
+      </section>
     </section>
   </main>
 </body>
