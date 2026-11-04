@@ -2,7 +2,7 @@ const VISUAL_CYCLE_MS = 3000;
 const state = {
   mode: 'vout', selected: null,
   vin: 5, duty: 0.10, targetVout: 5 / 0.9,
-  inductance: 100e-6, capacitance: 100e-6, resistance: 20, frequency: 200_000,
+  inductance: 220e-6, capacitance: 220e-6, resistance: 500, frequency: 200_000,
   runTimer: null, closeTimer: null, phase: 'off'
 };
 
@@ -11,7 +11,7 @@ const controls = {
   duty: { title: 'Duty ratio', symbol: 'D', description: 'Fraction of each cycle for which the switch is on.', min: 1, max: 80, step: 0.1, toSlider: v => v * 100, fromSlider: v => v / 100, format: v => `${(v * 100).toFixed(1)}%` },
   vout: { title: 'Output voltage', symbol: 'V<sub>out</sub>', description: 'Choose a target output voltage. The required duty ratio is calculated.', min: 1.1, max: 120, step: 0.01, toSlider: v => v, fromSlider: v => v, format: v => `${v.toFixed(2)} V` },
   inductance: { title: 'Inductance', symbol: 'L', description: 'Changing L changes current ripple and the CCM boundary.', min: 1, max: 500, step: 1, toSlider: v => v * 1e6, fromSlider: v => v * 1e-6, format: v => `${Math.round(v * 1e6)} µH` },
-  capacitance: { title: 'Output capacitance', symbol: 'C', description: 'The 100 µF default is illustrative. Changing C changes output-voltage ripple.', min: 1, max: 1000, step: 1, toSlider: v => v * 1e6, fromSlider: v => v * 1e-6, format: v => `${Math.round(v * 1e6)} µF` },
+  capacitance: { title: 'Output capacitance', symbol: 'C', description: 'The 220 µF default is illustrative. Changing C changes output-voltage ripple.', min: 1, max: 1000, step: 1, toSlider: v => v * 1e6, fromSlider: v => v * 1e-6, format: v => `${Math.round(v * 1e6)} µF` },
   resistance: { title: 'Load resistance', symbol: 'R', description: 'Changing R changes load current and the CCM boundary.', min: 1, max: 1000, step: 1, toSlider: v => v, fromSlider: v => v, format: v => `${Math.round(v)} Ω` }
 };
 const controlUnits = { vin: 'V', duty: '%', vout: 'V', inductance: 'µH', capacitance: 'µF', resistance: 'Ω' };
