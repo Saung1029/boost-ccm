@@ -12,7 +12,7 @@ const controls = {
   vout: { title: 'Output voltage', symbol: 'V<sub>out</sub>', description: 'Choose a target output voltage. The required duty ratio is calculated.', min: 1.1, max: 120, step: 0.01, toSlider: v => v, fromSlider: v => v, format: v => `${v.toFixed(2)} V` },
   inductance: { title: 'Inductance', symbol: 'L', description: 'Changing L changes current ripple and the CCM boundary.', min: 1, max: 500, step: 1, toSlider: v => v * 1e6, fromSlider: v => v * 1e-6, format: v => `${Math.round(v * 1e6)} µH` },
   capacitance: { title: 'Output capacitance', symbol: 'C', description: 'The 100 µF default is illustrative. Changing C changes output-voltage ripple.', min: 1, max: 1000, step: 1, toSlider: v => v * 1e6, fromSlider: v => v * 1e-6, format: v => `${Math.round(v * 1e6)} µF` },
-  resistance: { title: 'Load resistance', symbol: 'R', description: 'Changing R changes load current and the CCM boundary.', min: 1, max: 200, step: 1, toSlider: v => v, fromSlider: v => v, format: v => `${Math.round(v)} Ω` }
+  resistance: { title: 'Load resistance', symbol: 'R', description: 'Changing R changes load current and the CCM boundary.', min: 1, max: 1000, step: 1, toSlider: v => v, fromSlider: v => v, format: v => `${Math.round(v)} Ω` }
 };
 const controlUnits = { vin: 'V', duty: '%', vout: 'V', inductance: 'µH', capacitance: 'µF', resistance: 'Ω' };
 
