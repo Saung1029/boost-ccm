@@ -160,3 +160,50 @@ h1{font-size:clamp(30px,3vw,42px);margin:0}
 @media(max-width:1150px){.workspace{grid-template-columns:1fr}}
 @media(max-width:800px){.page-head{display:block}.intro{margin-top:10px}.mode-card{display:block}.mode-switch{min-width:0;margin-top:12px}.circuit-footer{align-items:stretch;flex-direction:column}.run-actions{justify-content:space-between}.phase-label{text-align:left}.plots{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:500px){.shell{padding:14px 10px 24px}.circuit-card,.results{padding-left:12px;padding-right:12px}.mode-card{padding:12px}.mode{font-size:12px;padding:9px}.hint{display:none}.status-box{min-width:0}.metrics strong{font-size:19px}}
+
+/* CUHK course interface */
+:root{--bg:#f6f5f7;--ink:#28232c;--muted:#625d66;--navy:#5b2a82;--line:#ded9e2;--teal:#5b2a82;--lime:#f0e8f5;--card:#fff}
+body{background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+h1,h2,h3{font-family:Arial,Helvetica,sans-serif;letter-spacing:0}
+.shell{padding-top:18px}
+.page-head{background:#fff;border-bottom:3px solid #5b2a82;padding:10px 16px 12px;gap:20px}
+.identity{display:flex;align-items:center;gap:18px;min-width:0}
+.university-logo{display:block;width:278px;height:50px;object-fit:contain;flex:none}
+.course-heading{border-left:1px solid var(--line);padding-left:18px}
+.course-heading h1{font-size:28px;line-height:1.1;font-weight:700;color:#4b216e;margin:0}
+.course-topic{margin:4px 0 0;font-size:13px;color:var(--ink);white-space:nowrap}
+.page-head .intro{max-width:310px;font-size:12px;line-height:1.45}
+.eyebrow{color:#5b2a82;font-size:10px;letter-spacing:.08em}
+.mode-card,.circuit-card,.results{border:1px solid var(--line);border-radius:4px;box-shadow:none}
+.mode-card{padding:12px 16px}
+.mode-switch{min-width:320px;gap:0;padding:0;background:#fff;border:1px solid var(--line);border-radius:4px}
+.mode{min-height:40px;padding:10px 14px;border-radius:0;background:#fff;color:#4b216e;font-size:13px;font-weight:600}
+.mode+.mode{border-left:1px solid var(--line)}
+.mode.active{background:#5b2a82;color:#fff;box-shadow:none}
+.mode:not(.active):hover{background:#f4eff7}
+.mode:focus-visible,.run-button:focus-visible{outline:2px solid #b38d36;outline-offset:2px}
+.circuit-card .section-head h2,.results .section-head h2{font-size:18px}
+.hint,.run-state{background:#f4f1f6;color:#5c5263;border-radius:3px;padding:6px 8px}
+input[type=range],.circuit-size input,.popover-row input[type=range]{accent-color:#5b2a82}
+.wire path,.symbol-shape,.symbol-line{stroke:#3e3b43}
+.node circle{fill:#3e3b43}
+.symbol-shape.small{fill:#3e3b43}
+.symbol-text{fill:#28232c}
+.value-text{fill:#5b2a82}
+.component.control:hover .hit,.component.control:focus-visible .hit{fill:#f3edf7;stroke:#b49ac7}
+.component.control.selected .hit{fill:#f3edf7;stroke:#855aa2}
+.flow-path path{stroke:#b38d36}
+.run-button{background:#5b2a82;border-radius:4px;transition:background .15s}
+.run-button:hover{background:#452062;transform:none}
+.status-box,.metrics>div,.plot-card,.component-popover,.popover-number input{border-radius:4px}
+.metrics>div{background:#faf9fb;border-color:var(--line)}
+.metrics strong{color:#28232c}
+.plot-card{border-color:var(--line)}
+.plot-line{stroke:#5b2a82}
+.plot-line.voltage{stroke:#aa8027}
+.component-popover{border-color:#cfc3d7;box-shadow:0 6px 18px #2d19341a}
+.popover-number,.popover-row-head strong{color:#5b2a82}
+.popover-number input{color:#5b2a82;border-color:#cfc3d7}
+.popover-number input:focus{outline-color:#b49ac7}
+@media(max-width:900px){.page-head{display:block}.page-head .intro{max-width:none;margin-top:12px}}
+@media(max-width:540px){.identity{align-items:flex-start;flex-direction:column;gap:8px}.university-logo{width:250px;height:auto}.course-heading{border-left:0;padding-left:0}.course-heading h1{font-size:24px}.course-topic{white-space:normal}}
