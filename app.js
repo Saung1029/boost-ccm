@@ -84,7 +84,7 @@ function refreshControls() {
     const number = $('primary-number');
     number.min = config.min;
     number.max = config.max;
-    number.step = config.step;
+    number.step = config.sliderStep ?? config.step;
     number.setAttribute('aria-label', `${config.title} in ${controlUnits[key]}`);
     if (document.activeElement !== number) number.value = config.sliderStep ? primaryValue(key) : input.value;
     $('primary-unit').textContent = controlUnits[key];
