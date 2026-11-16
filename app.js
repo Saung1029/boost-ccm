@@ -145,6 +145,7 @@ function update() {
     $('run-state').textContent = 'Ready to run';
     $('results-prompt').hidden = false;
     $('results-content').hidden = true;
+    $('metric-duty').textContent = '';
     stopAnimation();
   }
   $('phase-label').textContent = `Animation ${animationFactor()}× slower · 3 s per cycle`;
@@ -247,6 +248,7 @@ function run() {
   $('metric-iout').textContent = `${v.iout.toFixed(3)} A`;
   $('metric-il').textContent = `${v.il.toFixed(3)} A`;
   $('metric-ripple').textContent = `${v.ripple.toFixed(3)} A`;
+  $('metric-duty').textContent = ` (D=${(v.duty * 100).toFixed(2)}%)`;
   const current = pointsFor(v, 'current');
   const voltage = pointsFor(v, 'voltage');
   drawPlot('current-plot', current, 'current');
