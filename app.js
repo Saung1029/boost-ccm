@@ -8,7 +8,7 @@ const state = {
 
 const controls = {
   vin: { title: 'Input voltage', symbol: 'V<sub>in</sub>', description: 'Set the DC input supplied to the converter.', min: 1, max: 24, step: 0.1, toSlider: v => v, fromSlider: v => v, format: v => `${v.toFixed(1)} V` },
-  duty: { title: 'Duty ratio', symbol: 'D', description: 'Fraction of each cycle for which the switch is on.', min: 1, max: 80, step: 0.1, toSlider: v => v * 100, fromSlider: v => v / 100, format: v => `${(v * 100).toFixed(1)}%` },
+  duty: { title: 'Duty ratio', symbol: 'D', description: 'Fraction of each cycle for which the switch is on.', min: 1, max: 80, step: 0.1, sliderStep: 1, toSlider: v => v * 100, fromSlider: v => v / 100, format: v => `${(v * 100).toFixed(1)}%` },
   vout: { title: 'Output voltage', symbol: 'V<sub>out</sub>', description: 'Choose a target output voltage. The required duty ratio is calculated.', min: 1.1, max: 120, step: 0.01, toSlider: v => v, fromSlider: v => v, format: v => `${v.toFixed(2)} V` },
   inductance: { title: 'Inductance', symbol: 'L', description: 'Changing L changes current ripple and the CCM boundary.', min: 1, max: 500, step: 1, toSlider: v => v * 1e6, fromSlider: v => v * 1e-6, format: v => `${Math.round(v * 1e6)} µH` },
   capacitance: { title: 'Output capacitance', symbol: 'C', description: 'The 220 µF default is illustrative. Changing C changes output-voltage ripple.', min: 1, max: 1000, step: 1, toSlider: v => v * 1e6, fromSlider: v => v * 1e-6, format: v => `${Math.round(v * 1e6)} µF` },
@@ -78,7 +78,7 @@ function refreshControls() {
     const input = $('primary-slider');
     input.min = config.min;
     input.max = config.max;
-    input.step = config.step;
+    input.step = config.sliderStep ?? config.step;
     input.value = config.toSlider(key === 'vout' ? state.targetVout : state[key]);
     input.setAttribute('aria-label', config.title);
     const number = $('primary-number');
@@ -86,13 +86,17 @@ function refreshControls() {
     number.max = config.max;
     number.step = config.step;
     number.setAttribute('aria-label', `${config.title} in ${controlUnits[key]}`);
-    if (document.activeElement !== number) number.value = input.value;
+    if (document.activeElement !== number) number.value = config.sliderStep ? primaryValue(key) : input.value;
     $('primary-unit').textContent = controlUnits[key];
   }
   if (key === 'duty') {
     $('frequency-slider').value = state.frequency / 1000;
     if (document.activeElement !== $('frequency-number')) $('frequency-number').value = $('frequency-slider').value;
   }
+}
+
+function primaryValue(key) {
+  return Number(controls[key].toSlider(key === 'vout' ? state.targetVout : state[key]).toPrecision(10));
 }
 
 function openControls(key) {
@@ -290,7 +294,7 @@ $('frequency-slider').addEventListener('input', event => {
   state.frequency = Number(event.target.value) * 1000;
   update();
 });
-function bindNumber(numberId, sliderId, apply) {
+function bindNumber(numberId, sliderId, apply, current = () => slider.value) {
   const number = $(numberId);
   const slider = $(sliderId);
   number.addEventListener('input', () => {
@@ -299,20 +303,21 @@ function bindNumber(numberId, sliderId, apply) {
     number.setAttribute('aria-invalid', String(!valid));
     if (!valid) return;
     slider.value = value;
-    apply(Number(slider.value));
+    apply(Number(slider.value), value);
     update();
   });
   number.addEventListener('blur', () => {
-    number.value = slider.value;
+    number.value = current();
     number.removeAttribute('aria-invalid');
   });
 }
-bindNumber('primary-number', 'primary-slider', value => {
+bindNumber('primary-number', 'primary-slider', (snapped, typed) => {
   const key = state.selected;
   if (!key || key === calculatedKey()) return;
+  const value = controls[key].sliderStep ? typed : snapped;
   if (key === 'vout') state.targetVout = controls[key].fromSlider(value);
   else state[key] = controls[key].fromSlider(value);
-});
+}, () => controls[state.selected]?.sliderStep ? primaryValue(state.selected) : $('primary-slider').value);
 bindNumber('frequency-number', 'frequency-slider', value => { state.frequency = value * 1000; });
 $('mode-vout').addEventListener('click', () => setMode('vout'));
 $('mode-duty').addEventListener('click', () => setMode('duty'));
